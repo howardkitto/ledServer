@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    </head>
+
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <H1>
+        LED Controller Using Socket Relay
+    </H1>
+        <div>
+        <input type = button class="btn btn-lg btn-success" value = "On" onclick="fireMessage('On')" />
+        <input type = button class="btn btn-lg btn-warning" value = "Off" onclick="fireMessage('Off')" />
+        </div>
+
+  <div id="message" class="alert alert-info" role="alert"></div>
+
+    </div>
+    </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    socket.on('message', function(msg){
+      console.log(msg);
+      document.getElementById("message").innerHTML = msg;
+    });
+
+     var fireMessage = function(lightControl){
+        socket.emit('Light Control', { lightStatus: lightControl });
+         console.log('function working')
+    };
+  </script>
+</body>
+</html>
+
