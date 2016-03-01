@@ -13,8 +13,7 @@ app.get('/', function (req, res) {
 
 var lightCounter = function(){
     console.log("Light is on");
-    lightSecondsCount++;
-    io.emit('message', "The light has been on for " + lightSecondsCount + " Seconds");
+    io.emit('message', "Turn LED On ");
     }
 
 
@@ -23,11 +22,11 @@ io.on('connection', function (socket) {
     socket.on('Light Control', function (msg) {
         switch (msg.lightStatus){
             case "On":
-                lightControl = setInterval(lightCounter, 1000);
+                lightControl = setInterval(lightCounter, 5000);
                 break;
             case "Off":
                 lightSecondsCount = 0;
-                var msg = "The LED is Off";
+                var msg = "Turn LED Off";
                 console.log(msg);
                 io.emit('message', "The light is off");
                 clearInterval(lightControl);
