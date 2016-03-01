@@ -21,6 +21,7 @@ io.on('connection', function (socket) {
     socket.on('Light Control', function (msg) {
         switch (msg.lightStatus){
             case "On":
+                console.log(msg);
                 lightControl = setInterval(lightCounter, 5000);
                 break;
             case "Off":
