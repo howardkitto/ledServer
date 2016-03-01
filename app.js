@@ -12,8 +12,7 @@ app.get('/', function (req, res) {
 
 
 var lightCounter = function(){
-    console.log("Light is on");
-    io.emit('message', "Turn LED On ");
+    io.emit('message', "Turn LED On");
     }
 
 
@@ -26,9 +25,8 @@ io.on('connection', function (socket) {
                 break;
             case "Off":
                 lightSecondsCount = 0;
-                var msg = "Turn LED Off";
                 console.log(msg);
-                io.emit('message', "The light is off");
+                io.emit('message', "Turn LED Off");
                 clearInterval(lightControl);
                 break;
         }
