@@ -22,24 +22,3 @@ io.on('connection', function (socket) {
 
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-//        setInterval (
-//        function() {
-//            if (clockStatus == true)
-//                {
-//                var msg = Math.random();
-//                io.emit('message', msg);
-//                console.log (msg);
-//                }, 1000});
-//};
