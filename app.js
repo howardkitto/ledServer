@@ -16,20 +16,19 @@ var sendMessage = function(msgToArd){
 io.on('connection', function (socket) {
 
     socket.on('Light Control', function (msg) {
-        switch (msg.lightStatus){
-            case "On":
-                console.log(msg);
-                sendMessage("On");
-                break;
-            case "Off":
-                console.log(msg);
-                sendMessage("Off");
-                break;
-        }
+        sendMessage(msg.lightStatus);
 
 
-
-
+//        switch (msg.lightStatus){
+//            case "On":
+//                console.log(msg);
+//                sendMessage("On");
+//                break;
+//            case "Off":
+//                console.log(msg);
+//                sendMessage("Off");
+//                break;
+//        }
     });
 
 
