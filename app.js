@@ -18,17 +18,6 @@ io.on('connection', function (socket) {
     socket.on('Light Control', function (msg) {
         sendMessage(msg.lightStatus);
 
-
-//        switch (msg.lightStatus){
-//            case "On":
-//                console.log(msg);
-//                sendMessage("On");
-//                break;
-//            case "Off":
-//                console.log(msg);
-//                sendMessage("Off");
-//                break;
-//        }
     });
 
 
