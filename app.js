@@ -1,8 +1,6 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var lightControl;
-var lightSecondsCount = 0;
 
 server.listen(process.env.PORT || 3000);
 
@@ -10,11 +8,10 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
-
-var lightCounter = function(){
-    io.emit('message', "Turn LED On");
-    }
-
+var sendMessage = function(msgToArd){
+    io.emit('message', msgToArd);
+    console.log(msgToArd);
+    };
 
 io.on('connection', function (socket) {
 
@@ -22,13 +19,11 @@ io.on('connection', function (socket) {
         switch (msg.lightStatus){
             case "On":
                 console.log(msg);
-                lightControl = setInterval(lightCounter, 5000);
+                sendMessage("On");
                 break;
             case "Off":
-                lightSecondsCount = 0;
                 console.log(msg);
-                io.emit('message', "Turn LED Off");
-                clearInterval(lightControl);
+                sendMessage("Off");
                 break;
         }
 
