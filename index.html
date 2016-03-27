@@ -16,14 +16,16 @@
         LED Controller Using Socket Relay
     </H1>
         <div>
-        <input type = button class="btn btn-lg btn-success" value = "On" onclick="fireMessage('GreenOn')" />
-        <input type = button class="btn btn-lg btn-warning" value = "Off" onclick="fireMessage('GreenOff')" />
+        <input type = button id = "GreenOn" class="btn btn-lg btn-success" value = "On" onclick="fireMessage('GreenOn', 0)" />
+        <input type = button id = "GreenOff" class="btn btn-lg btn-warning" value = "Off" onclick="fireMessage('GreenOff', 1)" />
         </div>
         <div>
-          <input type = button class="btn btn-lg btn-danger" value = "On" onclick="fireMessage('RedOn')" />
-        <input type = button class="btn btn-lg btn-warning" value = "Off" onclick="fireMessage('RedOff')" /></div>
+          <input type = button id = "RedOn" class="btn btn-lg btn-danger" value = "On" onclick="fireMessage('RedOn', 2)" />
+        <input type = button id = "RedOff" class="btn btn-lg btn-warning" value = "Off" onclick="fireMessage('RedOff', 3)" /></div>
 
-  <div id="message" class="alert alert-info" role="alert"></div>
+<div id="ledStatus" class="alert alert-info" role="alert"></div>
+
+<div id="arduinoAck" class="alert alert-info" role="alert"></div>
 
     </div>
     </div>
@@ -31,16 +33,67 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
+    var buttons = document.getElementsByTagName('input');
+    var lastButtonClicked = null;
+    var buttonSates= [true,false,true,false];
 
-    socket.on('message', function(msg){
-      console.log(msg);
-      document.getElementById("message").innerHTML = msg;
+      socket.on('arduinoAck', function(msg){
+      document.getElementById("arduinoAck").innerHTML = msg;
+
+          setButtons();
+
     });
 
-     var fireMessage = function(lightControl){
+      socket.on('buttonClick', function(msg){
+      document.getElementById("ledStatus").innerHTML = msg;
+    });
+
+
+     var fireMessage = function(lightControl, theButton){
         socket.emit('Light Control', { lightStatus: lightControl });
-         console.log('function working')
+
+         lastButtonClicked = theButton;
+
+         document.getElementById("arduinoAck").innerHTML = "";
+
+         disableButtons();
+
     };
+
+      var setButtons = function(){
+          console.log('lbc '+lastButtonClicked);
+          console.log(buttonSates);
+
+          if(lastButtonClicked == 0){
+              buttonSates[1] = true;
+          }
+          else if(lastButtonClicked == 1){
+              buttonSates[0] = true;
+          }
+          else if(lastButtonClicked == 2){
+              buttonSates[3] = true;
+          }
+          else if(lastButtonClicked == 3){
+              buttonSates[2] = true;
+          }
+
+          buttonSates[lastButtonClicked] = false;
+
+         for (i = 0; i < buttons.length; i++){
+
+            if(buttonSates[i] == true)
+            {buttons[i].removeAttribute('disabled');}
+         };
+    };
+
+      var disableButtons = function(){
+           for (i = 0; i < buttons.length; i++){
+            {buttons[i].setAttribute('disabled', 'true');}
+            };
+
+      }
+
+        setButtons();
   </script>
 </body>
 </html>

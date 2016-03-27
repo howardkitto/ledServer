@@ -9,7 +9,7 @@ app.get('/', function (req, res) {
 });
 
 var sendMessage = function(msgToArd){
-    io.emit('message', msgToArd);
+    io.emit('buttonClick', msgToArd);
     console.log(msgToArd);
     };
 
@@ -17,8 +17,11 @@ io.on('connection', function (socket) {
 
     socket.on('Light Control', function (msg) {
         sendMessage(msg.lightStatus);
-
     });
 
+    socket.on('arduinoAck', function (msg) {
+        io.emit('arduinoAck', msg);
+        console.log(msg);
+    });
 
 });
