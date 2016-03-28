@@ -8,20 +8,35 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
-var sendMessage = function(msgToArd){
-    io.emit('buttonClick', msgToArd);
-    console.log(msgToArd);
-    };
+var lastButtonClicked = 0;
+var buttonStates = [true, false, true, false];
 
 io.on('connection', function (socket) {
 
     socket.on('Light Control', function (msg) {
-        sendMessage(msg.lightStatus);
+        lastButtonClicked = msg.theButton;
+        io.emit('Light Control', msg.lightStatus);
     });
 
     socket.on('arduinoAck', function (msg) {
-        io.emit('arduinoAck', msg);
-        console.log(msg);
+
+          if(lastButtonClicked == 0){
+              buttonStates[1] = true;
+          }
+          else if(lastButtonClicked == 1){
+              buttonStates[0] = true;
+          }
+          else if(lastButtonClicked == 2){
+              buttonStates[3] = true;
+          }
+          else if(lastButtonClicked == 3){
+              buttonStates[2] = true;
+          }
+
+          buttonStates[lastButtonClicked] = false;
+
+        io.emit('arduinoAck', buttonStates);
+
     });
 
 });
