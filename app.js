@@ -12,10 +12,14 @@ var lastButtonClicked = 0;
 var buttonStates = [true, false, true, false];
 
 io.on('connection', function (socket) {
+    console.log('A user connected')
 
     socket.on('Light Control', function (msg) {
+        console.log(msg);
         lastButtonClicked = msg.theButton;
         io.emit('Light Control', msg.lightStatus);
+        updateButtons();
+
     });
 
     socket.on('arduinoAck', function (msg) {
@@ -35,8 +39,33 @@ io.on('connection', function (socket) {
 
           buttonStates[lastButtonClicked] = false;
 
-        io.emit('arduinoAck', buttonStates);
+        io.emit('lightArray', buttonStates);
 
     });
+
+    updateButtons = function(){
+
+        if(lastButtonClicked == 0){
+              buttonStates[1] = true;
+          }
+          else if(lastButtonClicked == 1){
+              buttonStates[0] = true;
+          }
+          else if(lastButtonClicked == 2){
+              buttonStates[3] = true;
+          }
+          else if(lastButtonClicked == 3){
+              buttonStates[2] = true;
+          }
+
+          buttonStates[lastButtonClicked] = false;
+        console.log(buttonStates)
+
+        io.emit('arduinoAck', buttonStates);
+    }
+
+     socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
 
 });

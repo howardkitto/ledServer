@@ -37,7 +37,7 @@
     var buttons = document.getElementsByTagName('input');
     var buttonStates= [true,false,true,false];
 
-      socket.on('arduinoAck', function(msg){
+      socket.on('lightArray', function(msg){
       document.getElementById("arduinoAck").innerHTML = msg;
           console.log(msg);
           buttonStates = msg;
