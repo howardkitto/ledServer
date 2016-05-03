@@ -33,9 +33,41 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    var socket = io();
+    var socket = io.connect('http://192.168.1.5:3000', function(){
+        console.log('connected')
+    });
+
     var buttons = document.getElementsByTagName('input');
     var buttonStates= [true,false,true,false];
+
+//generate GUID to identify client
+      function generateUUID(){
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+        d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+}
+
+      var clientID = generateUUID();
+
+      console.log(clientID);
+
+//      socket.emit('join', clientID);
+
+      socket.on('initClient', function(initMsg){
+          console.log(initMsg)
+      });
+
+      socket.on('connectedClients', function(msg){
+          console.log(msg);
+          document.getElementById("arduinoAck").innerHTML = msg;
+      })
 
       socket.on('lightArray', function(msg){
       document.getElementById("arduinoAck").innerHTML = msg;
@@ -53,7 +85,7 @@
         socket.emit('Light Control',
                     {lightStatus: lightControl,
                      theButton: theButton });
-
+         disableButtons();
          document.getElementById("arduinoAck").innerHTML = "";
 
     };

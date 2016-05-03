@@ -8,18 +8,31 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
+var numClients =0;
 var lastButtonClicked = 0;
 var buttonStates = [true, false, true, false];
 
 io.on('connection', function (socket) {
-    console.log('A user connected')
+
+    //count the number of clients and broadcast it
+    ++numClients;
+    console.log('A user connected checking my branch ' + numClients);
+    socket.emit('connectedClients ', numClients);
+
+    //The client send an ID the create a room for it
+    socket.on('join', function(clientId){
+        console.log('clientId: ' + clientId + ' just joined')
+        socket.join(clientId)
+    //Send hello to the client that just joined
+        socket.emit('initClient', 'hello ' + clientId)
+
+    });
 
     socket.on('Light Control', function (msg) {
         console.log(msg);
         lastButtonClicked = msg.theButton;
         io.emit('Light Control', msg.lightStatus);
         updateButtons();
-
     });
 
     socket.on('arduinoAck', function (msg) {
@@ -58,14 +71,17 @@ io.on('connection', function (socket) {
               buttonStates[2] = true;
           }
 
-          buttonStates[lastButtonClicked] = false;
+        buttonStates[lastButtonClicked] = false;
         console.log(buttonStates)
 
         io.emit('arduinoAck', buttonStates);
     }
 
+    //update the number of clients when they disconnect
      socket.on('disconnect', function(){
-    console.log('user disconnected');
+        --numClients;
+         console.log('user disconnected' + numClients);
+         socket.emit('connectedClients', 50000);
   });
 
 });
