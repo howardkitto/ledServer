@@ -33,14 +33,8 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    var socket = io.connect('http://192.168.1.5:3000', function(){
-        console.log('connected')
-    });
 
-    var buttons = document.getElementsByTagName('input');
-    var buttonStates= [true,false,true,false];
-
-//generate GUID to identify client
+    //generate GUID to identify client
       function generateUUID(){
     var d = new Date().getTime();
     if(window.performance && typeof window.performance.now === "function"){
@@ -54,15 +48,22 @@
     return uuid;
 }
 
-      var clientID = generateUUID();
+    var room = generateUUID();
+    var buttons = document.getElementsByTagName('input');
+    var buttonStates= [false,false,false,false];
 
-      console.log(clientID);
+    var socket = io.connect();
 
-//      socket.emit('join', clientID);
+    socket.on('connect', function() {
+     // Connected, let's sign-up for to receive messages for this room
+        socket.emit('room', room);
+    });
 
-      socket.on('initClient', function(initMsg){
-          console.log(initMsg)
-      });
+     socket.on('initialState', function(initButtonStates){
+            console.log(initButtonStates)
+            buttonStates = initButtonStates;
+         setButtons();
+        });
 
       socket.on('connectedClients', function(msg){
           console.log(msg);
